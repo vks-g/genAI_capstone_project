@@ -4,7 +4,10 @@ Each function represents one step in the reasoning pipeline.
 """
 
 import os
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_groq import ChatGroq
 from src.agent.state import ChurnAgentState
+from src.agent.prompts import RETENTION_SYSTEM_PROMPT, build_retention_user_prompt
 from src.agent.retriever import retrieve_strategies as rag_retrieve
 
 
@@ -128,11 +131,65 @@ def retrieve_strategies(state: ChurnAgentState) -> ChurnAgentState:
 def plan_intervention(state: ChurnAgentState) -> ChurnAgentState:
     """
     Node 3: LLM-Based Planning
-    Constructs a prompt from customer profile + retrieved strategy chunks.
-    Calls Groq LLM via LangChain to generate retention recommendations.
-    Returns updated state with llm_reasoning populated.
+    Sends the customer risk profile and retrieved knowledge to Groq LLM.
+    Instructs the LLM to respond in structured JSON format.
+    Stores the raw LLM response string in llm_reasoning.
     """
-    raise NotImplementedError("To be implemented in agent implementation prompt.")
+    # Resolve API key: try Streamlit secrets first, fall back to env var
+    groq_api_key = None
+    try:
+        import streamlit as st
+
+        groq_api_key = st.secrets.get("GROQ_API_KEY")
+    except Exception:
+        pass
+    if not groq_api_key:
+        groq_api_key = os.getenv("GROQ_API_KEY")
+
+    if not groq_api_key:
+        return {
+            **state,
+            "llm_reasoning": "",
+            "error": (
+                "GROQ_API_KEY is not set. Add it to your .env file locally "
+                "or to Streamlit Secrets for deployment."
+            ),
+        }
+
+    # Build prompts
+    user_prompt = build_retention_user_prompt(
+        churn_probability=state["churn_probability"],
+        risk_level=state["risk_level"],
+        risk_drivers=state["risk_drivers"],
+        customer_data=state["customer_data"],
+        retrieved_chunks=state["retrieved_strategies"],
+    )
+
+    # Call Groq
+    try:
+        llm = ChatGroq(
+            model="llama-3.1-8b-instant",
+            api_key=groq_api_key,
+            temperature=0.3,  # Low temp for consistent, factual output
+            max_tokens=1024,
+        )
+        messages = [
+            SystemMessage(content=RETENTION_SYSTEM_PROMPT),
+            HumanMessage(content=user_prompt),
+        ]
+        response = llm.invoke(messages)
+        raw_output = response.content.strip()
+    except Exception as e:
+        return {
+            **state,
+            "llm_reasoning": "",
+            "error": f"LLM call failed: {str(e)}",
+        }
+
+    return {
+        **state,
+        "llm_reasoning": raw_output,
+    }
 
 
 def generate_report(state: ChurnAgentState) -> ChurnAgentState:
