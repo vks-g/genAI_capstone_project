@@ -12,7 +12,20 @@ chromadb.api.client.SharedSystemClient.clear_system_cache()
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
-EMBEDDINGS = HuggingFaceEmbeddings(model_name="intfloat/e5-small")
+_EMBEDDINGS_CACHE = None
+
+
+def _get_embeddings():
+    """Lazy singleton loader for the HuggingFace embedding model.
+    Only downloads/loads the model on the first call, not at import time.
+    This prevents slow cold starts on Streamlit Cloud.
+    """
+    global _EMBEDDINGS_CACHE
+    if _EMBEDDINGS_CACHE is None:
+        _EMBEDDINGS_CACHE = HuggingFaceEmbeddings(model_name="intfloat/e5-small")
+    return _EMBEDDINGS_CACHE
+
+
 DB_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "chroma_db"
 )
@@ -38,7 +51,7 @@ def get_vector_store(use_cloud=False, cloud_api_key=None):
 
         return Chroma(
             collection_name="saas_retention_strategies",
-            embedding_function=EMBEDDINGS,
+            embedding_function=_get_embeddings(),
             client=client,
         )
     else:
@@ -49,7 +62,7 @@ def get_vector_store(use_cloud=False, cloud_api_key=None):
             )
         return Chroma(
             collection_name="saas_retention_strategies",
-            embedding_function=EMBEDDINGS,
+            embedding_function=_get_embeddings(),
             persist_directory=DB_PATH,
         )
 
