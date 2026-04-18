@@ -10,6 +10,7 @@ venv/
 env/
 ENV/
 .venv
+.venv/
 
 # IDE
 .vscode/
@@ -20,7 +21,18 @@ ENV/
 
 # OS
 .DS_Store
+**/.DS_Store
 Thumbs.db
+
+# Environment files
+.env
+*.env
+
+# Chroma local vector store
+chroma_db/
+
+# Explicit Python bytecode
+*.pyc
 
 # Jupyter Notebook
 .ipynb_checkpoints
