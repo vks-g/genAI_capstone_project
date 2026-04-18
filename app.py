@@ -27,6 +27,13 @@ st.set_page_config(
 st.markdown(
     """
 <style>
+    :root {
+        --panel-glass: rgba(255, 255, 255, 0.92);
+        --panel-border: rgba(255, 255, 255, 0.26);
+        --panel-shadow: 0 20px 60px rgba(8, 18, 44, 0.34);
+        --text-soft: #e5e7eb;
+    }
+
     .stApp {
         background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
     }
@@ -36,10 +43,12 @@ st.markdown(
     }
     
     .card {
-        background: white;
+        background: var(--panel-glass);
+        border: 1px solid var(--panel-border);
+        backdrop-filter: blur(6px);
         padding: 40px;
         border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        box-shadow: var(--panel-shadow);
         margin: 30px 0;
         transition: all 0.4s ease;
     }
@@ -114,6 +123,132 @@ st.markdown(
         margin: 40px 0 30px 0;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
+
+    .agent-hero-band {
+        margin: 0 auto 18px auto;
+        max-width: 1080px;
+        padding: 20px 24px;
+        border-radius: 18px;
+        border: 1px solid rgba(251, 191, 36, 0.45);
+        background: linear-gradient(135deg, rgba(23, 14, 5, 0.48), rgba(50, 23, 6, 0.28));
+        box-shadow: 0 16px 38px rgba(13, 13, 32, 0.24);
+    }
+
+    .agent-hero-title {
+        margin: 0;
+        color: #fef3c7;
+        font-size: 1.25em;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        text-align: center;
+    }
+
+    .agent-hero-subtitle {
+        margin: 8px 0 16px 0;
+        color: #fde68a;
+        font-size: 1em;
+        line-height: 1.65;
+        text-align: center;
+    }
+
+    .agent-pill-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .agent-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: #f9fafb;
+        font-size: 0.88em;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+
+    .disclaimer-panel {
+        background: linear-gradient(135deg, rgba(45, 25, 8, 0.82), rgba(88, 49, 12, 0.74));
+        border: 2px solid #f59e0b;
+        border-radius: 16px;
+        padding: 22px 26px;
+        margin-top: 20px;
+        box-shadow: 0 14px 34px rgba(13, 13, 32, 0.28);
+    }
+
+    .disclaimer-title {
+        margin: 0 0 10px 0;
+        color: #fef3c7;
+        font-size: 1.08em;
+        font-weight: 900;
+        letter-spacing: 0.2px;
+    }
+
+    .disclaimer-body {
+        margin: 0;
+        color: #fff7ed;
+        font-size: 1.04em;
+        line-height: 1.85;
+        font-weight: 550;
+    }
+
+    @media (max-width: 768px) {
+        .main-title {
+            font-size: 2.55em;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 1.06em;
+            margin-bottom: 26px;
+        }
+
+        .card {
+            padding: 24px;
+            margin: 18px 0;
+        }
+
+        .section-header {
+            font-size: 1.55em;
+            margin: 24px 0 16px 0;
+        }
+
+        .agent-hero-band {
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .agent-hero-title {
+            font-size: 1.02em;
+        }
+
+        .agent-hero-subtitle {
+            font-size: 0.94em;
+        }
+
+        .agent-pill {
+            font-size: 0.82em;
+            padding: 7px 10px;
+        }
+
+        .disclaimer-panel {
+            padding: 16px 18px;
+        }
+
+        .disclaimer-title {
+            font-size: 1em;
+        }
+
+        .disclaimer-body {
+            font-size: 0.98em;
+            line-height: 1.75;
+        }
+    }
 </style>
 """,
     unsafe_allow_html=True,
@@ -180,6 +315,25 @@ if st.session_state.page == "intro":
                 <strong style='color: #7e22ce;'>Decision Tree</strong>, and <strong style='color: #7e22ce;'>Random Forest</strong> 
                 - analyze customer behavior and make data-driven decisions.
             </p>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            """
+        <div class='agent-hero-band'>
+            <p class='agent-hero-title'>Now with Agentic Retention Intelligence</p>
+            <p class='agent-hero-subtitle'>
+                Beyond churn prediction, the system now runs a multi-step LangGraph pipeline
+                with RAG retrieval over domain research to generate grounded, personalized
+                retention strategies with source-backed recommendations.
+            </p>
+            <div class='agent-pill-row'>
+                <span class='agent-pill'>LangGraph: 4-node reasoning flow</span>
+                <span class='agent-pill'>RAG: Chroma + 7 research PDFs</span>
+                <span class='agent-pill'>LLM: Groq-powered intervention planning</span>
+            </div>
         </div>
         """,
             unsafe_allow_html=True,
@@ -972,9 +1126,9 @@ elif st.session_state.page == "agent_report":
             with col2:
                 st.markdown(
                     f"""
-                <div style='background:rgba(245,158,11,0.15); border:2px solid #f59e0b;
-                            border-radius:15px; padding:25px; margin-top:20px;'>
-                    <p style='color:#92400e; font-size:0.95em; line-height:1.8; margin:0;'>
+                <div class='disclaimer-panel'>
+                    <p class='disclaimer-title'>⚠️ Ethical Disclaimer</p>
+                    <p class='disclaimer-body'>
                         {disclaimer}
                     </p>
                 </div>
