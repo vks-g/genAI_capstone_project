@@ -5,19 +5,19 @@
 > A two-milestone AI system: classical ML churn prediction (Milestone 1) extended
 > into a LangGraph-powered agentic retention strategist with RAG (Milestone 2).
 
-🔗 **Live Demo:** [Add Streamlit Cloud URL here once deployed]
+🔗 **Live Demo:** https://genaicapstoneproject.streamlit.app
 📁 **Course:** Intro to GenAI - Project 5
 
 ---
 
 ## Team Members
 
-| Name | Roll Number |
+| Name | Enrolment No. |
 |------|-------------|
-| Shreyash Golhani | - |
-| Gokul VKS | - |
-| Vaageesh Kumar Singh | - |
-| Mohammad Affan Anas | - |
+| Shreyash Golhani | 2401020069 |
+| Gokul VKS | 2401020094 |
+| Vaageesh Kumar Singh | 2401020073 |
+| Mohammad Affan Anas | 2401010280 |
 
 ---
 
@@ -32,6 +32,41 @@ autonomously assesses churn risk, retrieves evidence-based retention strategies
 from a 7-document knowledge base via RAG (Chroma + sentence-transformers), plans
 personalised interventions using a Groq-hosted LLM (Llama 3.1 8B), and generates
 a structured retention report with sources and an ethical disclaimer.
+
+---
+
+## Architecture Preview (Mermaid)
+
+> This is a concise architecture preview for quick understanding.  
+> For the full node-level architecture and detailed workflow, see `Documentation/Architecture.md`.
+
+```mermaid
+flowchart TD
+    A[Telco Dataset\n7,043 customers, 21 columns] --> B
+
+    subgraph B[Milestone 1 - ML Pipeline]
+        B1[Preprocessing\nDrop customerID, fix TotalCharges, one-hot encode, scale]
+        B2[Train/Test Split + SMOTE\n80/20 split, train-only oversampling]
+        B3[Train 3 Models\nLogistic Regression | Decision Tree | Random Forest]
+        B4[Evaluate + Serialize\nAccuracy/Precision/Recall/F1, confusion matrix, .pkl files]
+        B1 --> B2 --> B3 --> B4
+    end
+
+    B --> C[churn_probability 0-1 + customer profile]
+
+    subgraph D[Milestone 2 - LangGraph Agent]
+        D1[assess_risk\nRisk tier: low/medium/high + human-readable drivers]
+        D2[retrieve_strategies\nBuild query, retrieve top-4 chunks from Chroma]
+        D3[plan_intervention\nGroq llama-3.1-8b-instant returns strict JSON]
+        D4[generate_report\nParse JSON with fallback, add sources + ethical disclaimer]
+        D1 --> D2 --> D3 --> D4
+    end
+
+    C --> D1
+    K[Knowledge Base\n7 retention PDFs, ~2,000 chunks, intfloat/e5-small embeddings] --> D2
+    D4 --> E[Streamlit App\n5 pages: Intro, Input, Model Select, Results, Agent Report]
+    E --> F[Deployment\nStreamlit Community Cloud\nhttps://genaicapstoneproject.streamlit.app]
+```
 
 ---
 
@@ -141,7 +176,7 @@ genAI_capstone_project/
 
 ### 1. Clone and install
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Shreyashgol/genAI_capstone_project.git
 cd genAI_capstone_project
 pip install -r requirements.txt
 ```
