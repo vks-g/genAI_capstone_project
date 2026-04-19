@@ -47,7 +47,7 @@ flowchart TD
     subgraph B[Milestone 1 - ML Pipeline]
         B1[Preprocessing\nDrop customerID, fix TotalCharges, one-hot encode, scale]
         B2[Train/Test Split + SMOTE\n80/20 split, train-only oversampling]
-        B3[Train 3 Models\nLogistic Regression | Decision Tree | Random Forest]
+        B3[Train 3 Models\nLogistic Regression, Decision Tree, Random Forest]
         B4[Evaluate + Serialize\nAccuracy/Precision/Recall/F1, confusion matrix, .pkl files]
         B1 --> B2 --> B3 --> B4
     end
