@@ -64,7 +64,7 @@ def create_and_persist_vector_store(
             )
 
         print(
-            f"✅ Successfully embedded and persisted {len(chunks)} chunks to Chroma Cloud."
+            f"Successfully embedded and persisted {len(chunks)} chunks to Chroma Cloud."
         )
         return vector_store
     else:
