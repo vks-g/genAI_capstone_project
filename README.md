@@ -113,13 +113,11 @@ genAI_capstone_project/
 |- knowledge_base/                 # 7 industry retention research PDFs
 |- chroma_db/                      # Pre-built Chroma vector store
 |- src/
-|  |- __init__.py
 |  |- preprocessing.py            # Input preprocessing for inference
 |  |- model_training.py           # Model loader
 |  |- evaluation.py               # ROC curve and confusion matrix helpers
 |  |- save_test_data.py           # One-time test split generator
 |  |- agent/
-|     |- __init__.py
 |     |- state.py                # LangGraph TypedDict state definition
 |     |- nodes.py                # Four node functions
 |     |- graph.py                # StateGraph compilation
